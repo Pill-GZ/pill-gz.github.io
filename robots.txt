@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://Pill-GZ.github.io/sitemap.xml
+Sitemap: https://pill-gz.github.io/sitemap.xml
