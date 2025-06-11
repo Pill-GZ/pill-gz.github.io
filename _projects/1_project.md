@@ -1,81 +1,83 @@
 ---
 layout: page
-title: project 1
-description: with background image
-img: assets/img/12.jpg
+title: Uncertainty in Model Calibration
+description: 2024-06-27
+img: assets/img/calibration_CI_after.jpg
+date: 2024-06-27
 importance: 1
 category: work
-related_publications: true
+related_publications: false
+giscus_comments: false
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+I built a <a href="https://pill-gz.shinyapps.io/ote-ci-calculator/">web calculator</a> to quantify the uncertainty of model calibration for integer targets.
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+---
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+I encountered the following meta-problem at work:
+
+> An ML model predicts the number of occurences of an event (E), among N samples. So we have
+> <ul>  <li> N samples </li>
+>       <li> Number of predicted events: E (for "expected") </li>
+>       <li> Number of actual events: O (for "observed") </li>
+> </ul> How calibrated is our model, knowing these numbers?
+
+Ideally, if the model is calibrated, the ratio O/E (or "OTE") should be close to 1.
+
+However, due to
+<ul>
+    <li> randomness, </li>
+    <li> and commonly, non-integer-valued model predictions </li>
+</ul>
+This ratio unlikely to be exactly 1, even if the model is calibrated. 
+
+
+Consider the following example where event is rare (say, p = 0.1):
+
+> <ul>
+>     <li> N = 3 </li>
+>     <li> E = 0.3 </li>
+>     <li> O = 0 </li>
+> </ul> which yields an OTE ratio of 0.
+
+The model is perfectly calibrated (E = 3 * 0.1), but we have an OTE of 0 with high probability (p = 0.729).
+
+
+Below is a real example I encountered at work: managers were trying to identify the segments of borrowers that are under-performing, ranking the observed-to-expected number of loan defaults. One of them is suspicious of the signals in some segments where sample sizes are small; notice the "Noise?" comments in column J.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/calibration_CI_before.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
+    Poeple were ranking by the raw "observed-to-expected" ratio (OTE). The confidence intervals were obtained by bootstrap. This is obviously problematic when sample size is small, or when events are rare.
 </div>
+
+Reading the OTE on its own is insufficient.
+
+A naive attempt to quantify the uncertainty in the OTE ratio by bootstrap obviously fails here, since the number observed events is 0, leading to a degenerate confidence interval (0, 0)
+
+The solution is to <b>properly account for the uncertainty in the OTE ratio</b>. Details can be found in the "About" page of the <a href="https://pill-gz.shinyapps.io/ote-ci-calculator/">web calculator</a>. 
+
+By constructing proper confidence intervals around OTE, one can now also obtain p-values for calibration-ness of the model.
+We can now properly rank the strnegths of evidence using the p-values, and not the raw OTEs.
+
+Here's what happens when we apply the tool to the data above.
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/calibration_CI_after.jpg" title="Calibration CI with confidence interval and p-values" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    This image can also have a caption. It's like magic.
+    Using the new methods I proposed, we now ranking issues by p-values, or "surprise index". The ranking is much more reasonable and takes into account when sample size is small or when events are rare. Confidence intervals no longer collapse when we have no positive events. 
 </div>
 
-You can also put regular text between your rows of images, even citations {% cite einstein1950meaning %}.
-Say you wanted to write a bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+Notice how the smaller segments with OTE>1 decreased in raking, compared to before.
+Further, Not all high OTEs warrant concern. Some are insufficient as evidence for model miscalibration, according the p-values.
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+As expected, the sample size plays a role in the uncertainty of the ratio. But not always in a way that aligns with my intuition. 
+You can play with the <a href="https://pill-gz.shinyapps.io/ote-ci-calculator/">calculator</a> to see if it does yours.
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
-
-{% raw %}
-
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
-
-{% endraw %}
+I find the problem small but neat, and perhaps common and worth sharing.
