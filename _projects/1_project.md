@@ -43,7 +43,7 @@ Consider the following example where event is rare (say, p = 0.1):
 The model is perfectly calibrated (E = 3 * 0.1), but we have an OTE of 0 with high probability (p = 0.729).
 
 
-Below is a real example I encountered at work: managers were trying to identify the segments of borrowers that are under-performing, ranking the observed-to-expected number of loan defaults. One of them is suspicious of the signals in some segments where sample sizes are small; notice the "Noise?" comments in column J.
+<!-- Here is a fictitious example I encountered at work: managers were trying to identify the segments of borrowers that are under-performing, ranking the observed-to-expected number of loan defaults. One of them is suspicious of the signals in some segments where sample sizes are small; notice the "Noise?" comments in column J.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -54,7 +54,7 @@ Below is a real example I encountered at work: managers were trying to identify 
     Poeple were ranking by the raw "observed-to-expected" ratio (OTE). The confidence intervals were obtained by bootstrap. This is obviously problematic when sample size is small, or when events are rare.
 </div>
 
-Reading the OTE on its own is insufficient.
+Reading the OTE on its own is insufficient. -->
 
 A naive attempt to quantify the uncertainty in the OTE ratio by bootstrap obviously fails here, since the number observed events is 0, leading to a degenerate confidence interval (0, 0)
 
@@ -63,7 +63,7 @@ The solution is to <b>properly account for the uncertainty in the OTE ratio</b>.
 By constructing proper confidence intervals around OTE, one can now also obtain p-values for calibration-ness of the model.
 We can now properly rank the strnegths of evidence using the p-values, and not the raw OTEs.
 
-Here's what happens when we apply the tool to the data above.
+<!-- Here's what happens when we apply the tool to the data above.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -75,7 +75,7 @@ Here's what happens when we apply the tool to the data above.
 </div>
 
 Notice how the smaller segments with OTE>1 decreased in raking, compared to before.
-Further, Not all high OTEs warrant concern. Some are insufficient as evidence for model miscalibration, according the p-values.
+Further, Not all high OTEs warrant concern. Some are insufficient as evidence for model miscalibration, according the p-values. -->
 
 As expected, the sample size plays a role in the uncertainty of the ratio. But not always in a way that aligns with my intuition. 
 You can play with the <a href="https://pill-gz.shinyapps.io/ote-ci-calculator/">calculator</a> to see if it does yours.
