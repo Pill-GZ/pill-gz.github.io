@@ -35,11 +35,6 @@ ninja.data = [{
           description: "",
           section: "News",handler: () => {
               window.location.href = "/news/announcement_2/";
-            },},{id: "projects-uncertainty-in-model-calibration",
-          title: 'Uncertainty in Model Calibration',
-          description: "2024-06-27",
-          section: "Projects",handler: () => {
-              window.location.href = "/projects/1_project/";
             },},{
       id: 'light-theme',
       title: 'Change theme to light',
